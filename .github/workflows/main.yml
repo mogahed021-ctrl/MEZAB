@@ -1,0 +1,32 @@
+name: Build Flet APK
+
+on:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Flet and Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flet[cli]
+
+      - name: Build Android APK
+        run: |
+          flet build apk --project-name "AttendanceApp" --org com.mughed.attendance
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: attendance-apk
+          path: build/apk/app-release.apk
